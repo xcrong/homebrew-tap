@@ -16,6 +16,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Update formula from the latest brewup release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/update-formula.py
 
       - name: Commit and push when the formula changed

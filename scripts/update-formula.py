@@ -6,10 +6,13 @@ Exits 0 without writing when the formula already matches that release.
 
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
 import tempfile
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -23,15 +26,41 @@ ASSETS = (
 
 
 def latest_tag() -> str:
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "homebrew-brewup-update",
+    }
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(
         f"https://api.github.com/repos/{REPO}/releases/latest",
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "homebrew-brewup-update",
-        },
+        headers=headers,
     )
-    with urllib.request.urlopen(req) as response:
-        payload = json.load(response)
+    payload = None
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req) as response:
+                payload = json.load(response)
+            break
+        except urllib.error.HTTPError as exc:
+            retryable = exc.code in (403, 429, 500, 502, 503)
+            last_attempt = attempt == 2
+            if not retryable or last_attempt:
+                if exc.code == 403:
+                    sys.exit(
+                        "GitHub API returned 403 (rate limit exceeded). "
+                        "Set GH_TOKEN/GITHUB_TOKEN so the request is authenticated."
+                    )
+                raise
+            retry_after = exc.headers.get("Retry-After")
+            if retry_after is not None:
+                delay = int(retry_after)
+            else:
+                delay = 2**attempt * 10
+            print(f"GitHub API returned {exc.code}, retrying in {delay}s...")
+            time.sleep(delay)
+    assert payload is not None
     tag = payload["tag_name"]
     names = {asset["name"] for asset in payload["assets"]}
     missing = [name for name in ASSETS if name not in names]
