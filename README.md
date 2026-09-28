@@ -1,8 +1,28 @@
-# Homebrew tap for brewup
+# xcrong Homebrew Tap 🍺
+
+Personal Homebrew tap for xcrong apps.
 
 ```bash
-brew tap xcrong/brewup
+brew tap xcrong/tap
 brew install brewup
 ```
 
-Formula version tracks [brewup releases](https://github.com/xcrong/brewup/releases).
+| Formula | Upstream | Description |
+| ------- | -------- | ----------- |
+| `brewup` | [xcrong/brewup](https://github.com/xcrong/brewup) | One-command Homebrew update, upgrade, and cleanup |
+
+Formulae track their upstream GitHub releases automatically via a daily workflow.
+
+## Adding a new app
+
+1. Add `Formula/<name>.rb` for the new app.
+2. Register it in `scripts/update-formula.py` (`FORMULAE`), with its upstream repo and release asset names.
+3. Run `python3 scripts/update-formula.py <name>` once to verify, then commit.
+
+> Previous location: this tap used to live at `xcrong/homebrew-brewup` as `xcrong/brewup`.
+> If you tapped the old name, switch with:
+>
+> ```bash
+> brew untap xcrong/brewup
+> brew tap xcrong/tap
+> ```
