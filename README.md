@@ -10,6 +10,7 @@ brew install brewup
 | Formula | Upstream | Description |
 | ------- | -------- | ----------- |
 | `brewup` | [xcrong/brewup](https://github.com/xcrong/brewup) | One-command Homebrew update, upgrade, and cleanup |
+| `pig` | [xcrong/pig](https://github.com/xcrong/pig) | Grok Build with Providers (`xcrong/tap/pig`; bare `pig` resolves to Apache Pig in homebrew-core) |
 
 Formulae track their upstream GitHub releases automatically via a daily workflow.
 

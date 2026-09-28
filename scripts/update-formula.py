@@ -33,6 +33,13 @@ FORMULAE = {
             "brewup-x86_64-unknown-linux-gnu.tar.gz",
         ),
     },
+    "pig": {
+        "repo": "xcrong/pig",
+        "assets": (
+            "pig-macos-arm64.tar.gz",
+            "pig-linux-x86_64.tar.gz",
+        ),
+    },
 }
 
 
